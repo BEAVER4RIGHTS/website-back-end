@@ -24,3 +24,21 @@ router.post('/login', async (req, res) => {
 });
 
 module.exports = router;
+
+const bcrypt = require("bcryptjs");
+const User = require("../models/User");
+
+router.get("/seed", async (req, res) => {
+  try {
+    const hashedPassword = await bcrypt.hash("test123", 10);
+    const user = new User({
+      username: "testuser",
+      email: "test@example.com",
+      password: hashedPassword,
+    });
+    await user.save();
+    res.json({ msg: "Test user created!" });
+  } catch (err) {
+    res.status(500).json({ msg: "Error seeding user", error: err.message });
+  }
+});
