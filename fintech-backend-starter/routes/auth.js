@@ -1,10 +1,10 @@
-
 const express = require('express');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const User = require('../models/User');
 
+// Register
 router.post('/register', async (req, res) => {
   const { name, email, password } = req.body;
   const hashedPassword = await bcrypt.hash(password, 10);
@@ -13,6 +13,7 @@ router.post('/register', async (req, res) => {
   res.status(201).json({ message: 'User registered' });
 });
 
+// Login
 router.post('/login', async (req, res) => {
   const { email, password } = req.body;
   const user = await User.findOne({ email });
@@ -23,16 +24,12 @@ router.post('/login', async (req, res) => {
   res.json({ token });
 });
 
-module.exports = router;
-
-const bcrypt = require("bcryptjs");
-const User = require("../models/User");
-
-router.get("/seed", async (req, res) => {
+// Seed test user
+router.get('/seed', async (req, res) => {
   try {
     const hashedPassword = await bcrypt.hash("test123", 10);
     const user = new User({
-      username: "testuser",
+      name: "testuser",
       email: "test@example.com",
       password: hashedPassword,
     });
@@ -42,3 +39,5 @@ router.get("/seed", async (req, res) => {
     res.status(500).json({ msg: "Error seeding user", error: err.message });
   }
 });
+
+module.exports = router;
